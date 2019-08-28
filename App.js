@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
 export default function App() {
 
     const [game, setGame] = useState([]);
+    const [moves, setMoves] = useState(0);
     const [size, setSize] = useState(3);
 
     // Inicia matriz com numeros
@@ -27,18 +28,26 @@ export default function App() {
         startTable();
     }, [])
 
+    useEffect(() => {
+        verify(); 
+    },[game])
+
+    // Verifica se o jogo terminou
     const verify = () => {
-        for (let i = 1; i < size*size; i++)
-            if (game[i - 1] > game[i])
-                return 0
-        
-        Alert.alert('Parabéns', 'Você conseguiu resolver o puzzle',[
-            {
-                text: 'Reiniciar',
-                onPress: () => startTable()
-            },
-        ],{cancelable: false})
-            
+        if(moves > 0){
+            for (let i = 1; i < (size*size)-1; i++)
+                if (game[i - 1] > game[i])
+                    return 0
+    
+            Alert.alert('Parabéns', 'Você conseguiu resolver o puzzle',[
+                {
+                    text: 'Reiniciar',
+                    onPress: () => startTable()
+                },
+            ],{cancelable: false})
+                
+        }
+
     }
 
     const move = (position) => {
@@ -46,33 +55,42 @@ export default function App() {
         // Método escalonavel
         let vet = [...game];
 
-        if(vet[position-1] === '' ){
+        if(vet[position-1] === '' && (position-1)%size != size-1 ){
             aux = vet[position];
             vet[position] = vet[position-1];
             vet[position-1] = aux;
+            setMoves(moves+1);
         }
-        else if(vet[position+1] === ''){
+        else if(vet[position+1] === '' && (position+1)%size != 0){
             aux = vet[position];
             vet[position] = vet[position+1];
             vet[position+1] = aux;
+            setMoves(moves+1);
         }
         else if(vet[position-size] === ''){
             aux = vet[position];
             vet[position] = vet[position-size];
             vet[position-size] = aux;
+            setMoves(moves+1);
         }
         else if(vet[position+size] === ''){
             aux = vet[position];
             vet[position] = vet[position+size];
             vet[position+size] = aux;
+            setMoves(moves+1);
         }
 
         setGame(vet);
-        verify();
     }
 
     return (
         <View style={styles.container}>
+            <View>
+                <View style={styles.item}>
+                    <Text style={styles.text}>Movimentos</Text>
+                    <Text style={[styles.text, {fontSize:16}]}>{moves}</Text>
+                </View>
+            </View>
             <View style={styles.gameContainer}>
             {
                 game.map((value, index) => (
@@ -98,6 +116,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    item:{
+        justifyContent:'center',
+        alignItems: 'center'
+    },
+    text:{
+        color: "#fff",
+        fontSize: 22,
+    },
     gameContainer:{
         borderWidth: 1,
         borderColor: 'red',
@@ -107,7 +133,8 @@ const styles = StyleSheet.create({
         flexDirection:'row',
         flexWrap: 'wrap', 
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        marginTop: 15
     },
     numberContainer:{
         width: '33%',
