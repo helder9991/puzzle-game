@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 
 export default function App() {
 
     const [game, setGame] = useState([]);
 
     const startTable = () => {
-        let mat = new Array;
-        for (let i = 0; i < 3; i++) {
-            mat[i] = [i*3 + 1, i*3 + 2, i*3 + 3];
+        let vet = new Array;
+        for (let i = 0; i < 9; i++) {
+            vet[i] = i+1;
         }
-        mat[2][2] = '';
-        setGame(mat);
+        vet[8] = '';
+        setGame(vet);
     }
 
     useEffect(() => {
@@ -20,29 +20,17 @@ export default function App() {
 
     return (
         <View style={styles.container}>
+            <View style={styles.gameContainer}>
             {
-                game.map((value, index) => {
-                    if(index <= 2){
-                        return(
-                            <View key={index} style={styles.line1}>
-                                <Text>{ value }</Text>
-                            </View>
-                        )
-                    }else if(index <= 5){
-                        return(
-                            <View key={index} style={styles.line2}>
-                                <Text>{ value }</Text>
-                            </View>
-                        )
-                    }else{
-                        return(
-                            <View key={index} style={styles.line3}>
-                                <Text>{ value }</Text>
-                            </View>
-                        )
-                    }
-                })
+                game.map((value, index) => (
+                    <View key={index} style={styles.numberContainer}>
+                        <TouchableOpacity>
+                            <Text style={styles.number}>{value}</Text>
+                        </TouchableOpacity>
+                    </View>
+                ))
             }
+            </View>
         </View>
     );
 }
@@ -50,8 +38,30 @@ export default function App() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#000',
         alignItems: 'center',
         justifyContent: 'center',
     },
+    gameContainer:{
+        borderWidth: 1,
+        borderColor: 'red',
+        width: '80%',
+        height: '60%',
+        backgroundColor: '#fa8',
+        flexDirection:'row',
+        flexWrap: 'wrap', 
+    },
+    numberContainer:{
+        width: '33%',
+        height: '33%',
+        backgroundColor: '#add',
+        borderWidth: 1,
+        borderColor: '#fff',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },  
+    number:{
+        color: "#fff",
+        fontSize: 36,
+    }
 });
