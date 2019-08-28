@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
 
 export default function App() {
 
@@ -7,16 +7,6 @@ export default function App() {
     const [size, setSize] = useState(3);
 
     // Inicia matriz com numeros
-    const shuffle = () =>{
-        let aux = [...game];
-        console.log(game)
-        for (let i = 0; i < size*size; i++) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [aux[i], aux[j]] = [aux[j], aux[i]];
-        }
-        setGame(aux);
-    }
-
     const startTable = () => {
         let vet = new Array;
         for (let i = 0; i < size*size; i++) {
@@ -24,7 +14,8 @@ export default function App() {
         }
         vet[8] = '';
 
-        for (let i = 0; i < size*size; i++) {
+        // Embaralha os numeros
+        for (let i = 0; i < size*size-1; i++) {
             const j = Math.floor(Math.random() * (i + 1));
             [vet[i], vet[j]] = [vet[j], vet[i]];
         }
@@ -36,6 +27,19 @@ export default function App() {
         startTable();
     }, [])
 
+    const verify = () => {
+        for (let i = 1; i < size*size; i++)
+            if (game[i - 1] > game[i])
+                return 0
+        
+        Alert.alert('Parabéns', 'Você conseguiu resolver o puzzle',[
+            {
+                text: 'Reiniciar',
+                onPress: () => startTable()
+            },
+        ],{cancelable: false})
+            
+    }
 
     const move = (position) => {
         // Verifica se é possivel realizar o movimento
@@ -64,7 +68,7 @@ export default function App() {
         }
 
         setGame(vet);
-        console.log(game);
+        verify();
     }
 
     return (
@@ -80,6 +84,9 @@ export default function App() {
                 ))
             }
             </View>
+            <TouchableOpacity onPress={() => startTable()}>
+                <Text style={styles.restartButton}>Reiniciar</Text>
+            </TouchableOpacity>
         </View>
     );
 }
@@ -117,5 +124,10 @@ const styles = StyleSheet.create({
     number:{
         color: "#fff",
         fontSize: 36,
+    },
+    restartButton:{
+        color: '#fff',
+        fontSize: 20,
+        marginTop: 60
     }
 });
